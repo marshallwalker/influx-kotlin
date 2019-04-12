@@ -7,7 +7,7 @@ fun main() {
     val influxClient: InfluxClient by InfluxFactory(url = url)
 
     runBlocking {
-        val pong = influxClient.ping()
-        println(pong)
+        val databases = influxClient.describeDatabases()
+        println(databases.joinToString(", "))
     }
 }

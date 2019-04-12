@@ -1,23 +1,20 @@
 package ca.marshallwalker.influx
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.response.HttpResponse
 
 class InfluxClient internal constructor(
-    private val objectMapper: ObjectMapper,
-    private val httpClient: HttpClient,
-    private val url: String,
-    private val username: String,
-    private val password: String) {
+    httpClient: HttpClient,
+    url: String) {
 
-    suspend fun ping(): Pong {
-        val startEpoch = System.currentTimeMillis()
-        val response = httpClient.get<HttpResponse>("$url/ping")
-        val influxVersion = response.headers["X-Influxdb-Version"] ?: "unknown"
-        return Pong(influxVersion, System.currentTimeMillis() - startEpoch)
-    }
+    private val influxService = InfluxService(httpClient, url)
 
-    suspend fun version() = ping().version
+    suspend fun ping() = influxService.ping()
+
+    suspend fun version() = influxService.version()
+
+    suspend fun createDatabase(database: String) = influxService.createDatabase(database)
+
+    suspend fun deleteDatabase(database: String) = influxService.deleteDatabase(database)
+
+    suspend fun describeDatabases(): List<String> = influxService.describeDatabases()
 }
