@@ -21,6 +21,8 @@ fun logback(feature: String) = "ch.qos.logback:$feature:1.2.3"
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.7")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
 
     implementation(ktor("client-core"))
@@ -32,7 +34,7 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:1.7.26")
 
-    implementation(logback("logback-core:"))
+    implementation(logback("logback-core"))
     implementation(logback("logback-classic"))
 }
 

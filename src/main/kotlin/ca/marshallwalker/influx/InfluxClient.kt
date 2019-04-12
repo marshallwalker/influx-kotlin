@@ -1,20 +1,12 @@
 package ca.marshallwalker.influx
 
-import io.ktor.client.HttpClient
+import ca.marshallwalker.influx.model.Point
 
 class InfluxClient internal constructor(
-    httpClient: HttpClient,
-    url: String) {
+    repository: InfluxRepository): InfluxRepository by repository {
 
-    private val influxService = InfluxService(httpClient, url)
+    lateinit var database: String
 
-    suspend fun ping() = influxService.ping()
-
-    suspend fun version() = influxService.version()
-
-    suspend fun createDatabase(database: String) = influxService.createDatabase(database)
-
-    suspend fun deleteDatabase(database: String) = influxService.deleteDatabase(database)
-
-    suspend fun describeDatabases(): List<String> = influxService.describeDatabases()
+    suspend fun write(point: Point) =
+            write(database, point)
 }

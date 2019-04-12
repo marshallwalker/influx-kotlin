@@ -3,11 +3,13 @@ package ca.marshallwalker.influx
 import kotlinx.coroutines.runBlocking
 
 fun main() {
-    val url = "http://192.168.1.245:8086"
-    val influxClient: InfluxClient by InfluxFactory(url = url)
+    val influxClient by InfluxClientFactory {
+        url = "http://192.168.1.245:8086"
+    }
 
     runBlocking {
-        val databases = influxClient.describeDatabases()
-        println(databases.joinToString(", "))
+        println("Ping: ${influxClient.ping()}")
+        println("Version: ${influxClient.version()}")
+        println("Databases: ${influxClient.getDatabases()}")
     }
 }

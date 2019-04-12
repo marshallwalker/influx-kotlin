@@ -1,4 +1,4 @@
-package ca.marshallwalker.influx
+package ca.marshallwalker.influx.model
 
 data class Pong(
     val version: String,
