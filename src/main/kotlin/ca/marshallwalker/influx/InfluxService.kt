@@ -4,24 +4,24 @@ import ca.marshallwalker.influx.model.Point
 import ca.marshallwalker.influx.model.Pong
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
+import io.ktor.client.request.*
 import io.ktor.client.response.HttpResponse
+import io.ktor.http.HttpMethod
+import org.slf4j.LoggerFactory
 import kotlin.system.measureTimeMillis
 
 class InfluxService internal constructor(
     private val httpClient: HttpClient,
     private val url: String): InfluxRepository {
 
-    private suspend inline fun <reified T> query(query: String) = httpClient.post<T>("$url/query") {
+    private suspend inline fun <reified T: Any> query(query: String) = httpClient.post<T>("$url/query") {
         parameter("q", query)
-    }
+    }.also { logIt("query", it)}
 
     private suspend fun write(database: String, line: String) = httpClient.post<HttpResponse>("$url/write") {
         parameter("db", database)
         body = line
-    }
+    }.also { logIt("write", line)}
 
     override suspend fun ping(): Pong {
         var version = "unknown"
@@ -50,5 +50,13 @@ class InfluxService internal constructor(
     }
 
     override suspend fun write(database: String, point: Point) {
+    }
+
+    private fun <T: Any>logIt(method: String, any: T) {
+        logger.info("$method - $any")
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(InfluxService::class.java)
     }
 }
